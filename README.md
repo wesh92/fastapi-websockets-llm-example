@@ -17,7 +17,7 @@ This template includes:
 
 ## Prerequisites
 
-- Python 3.11 or higher
+- Python 3.13 or higher
 - Docker and Docker Compose (for containerized deployment)
 - OpenRouter API key (stored in secrets.toml)
 
@@ -60,6 +60,7 @@ Core dependencies include:
 
 1. Create a `secrets.toml` file in the project root:
 ```toml
+SECRET_KEY = "your-openssl-rand-hex-32-key"
 OPENROUTER_SECRET = "your-openrouter-api-key"
 ```
 
@@ -93,6 +94,8 @@ Connect to the WebSocket endpoint at:
 ws://localhost:8000/websockets/openrouter
 ```
 
+You can test with a platform like `WebSocketKing`.
+
 ### Message Format
 
 Messages to the WebSocket should follow this format:
@@ -101,11 +104,12 @@ Messages to the WebSocket should follow this format:
     "messages": [
         {
             "role": "user",
-            "content": "Your message here"
+            "content": "Write a simple python script to add 3 numbers."
         }
     ],
     "model": "google/gemini-flash-1.5",
-    "temperature": 1.0
+    "temperature": 1,
+    "top_p": 1
 }
 ```
 
@@ -115,6 +119,7 @@ Access the API documentation at:
 ```
 http://localhost:8000/docs
 ```
+NOTE: There is currently no documentation there for the WS although the category is there. TBD.
 
 ## Error Handling
 
@@ -147,6 +152,7 @@ The Docker container includes automated health checking every 90 seconds.
 ### Code Style
 
 The project uses ruff for code formatting and linting. Configuration is provided in `pyproject.toml`.
+This is setup using `uv` and I recommend using that.
 
 ## Security Considerations
 

@@ -34,11 +34,6 @@ class WebSocketStateModel(BaseModel):
     total_messages: int = 0
     current_request: Optional[OpenRouterRequestModel] = None
 
-class OpenRouterResponseChunk(BaseModel):
-    """Model for chunks of the OpenRouter streaming response"""
-    type: Literal["completion"]
-    data: Dict[str, Any]
-
 class OpenRouterErrorResponse(BaseModel):
     """Model for error responses"""
     type: Literal["error"]

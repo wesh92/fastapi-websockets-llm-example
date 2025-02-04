@@ -6,10 +6,12 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "aiohttp>=3.11.11",
+    "aioquic>=0.9.25",
     "bcrypt>=4.2.1",
     "fastapi[all]>=0.115.6",
     "gunicorn>=23.0.0",
     "httpx>=0.28.1",
+    "hypercorn[h3]>=0.17.3",
     "passlib>=1.7.4",
     "pydantic>=2.10.4",
     "pyjwt[crypto]>=2.10.1",

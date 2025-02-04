@@ -1,4 +1,4 @@
-FROM python:3.12-slim-bookworm
+FROM python:3.13-slim-bookworm
 
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy

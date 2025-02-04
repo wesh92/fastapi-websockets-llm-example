@@ -16,6 +16,7 @@ from .auth_model import TokenData, User, UserInDB
 current_dir = Path(__file__).parent
 # Navigate up to the root project directory and find secrets.toml
 secrets_path = current_dir.parent.parent / "secrets.toml"
+assert secrets_path.exists(), f"Secrets file not found at {secrets_path}"
 
 with open(secrets_path, "rb") as f:
     secrets = tomllib.load(f)

@@ -29,5 +29,9 @@ API_DOCS_METADATA = {
             "name": "health",
             "description": "Health Check",
         },
+        {
+            "name": "websockets",
+            "description": "Websockets",
+        },
     ],
 }

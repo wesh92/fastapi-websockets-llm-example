@@ -1,0 +1,49 @@
+# docker-compose.yml
+
+version: '3.8'  # Using recent compose version for better feature support
+
+services:
+  api:
+    build:
+      context: .  # Uses the current directory as build context
+      dockerfile: Dockerfile  # References your existing Dockerfile
+    ports:
+      - "8000:8000"  # Maps container port 8000 to host port 8000
+    volumes:
+      - ./:/app  # Mounts current directory to /app for development
+      - /app/.venv/  # Excludes virtual environment directory from mounting
+    environment:
+      - PYTHONPATH=/app
+      - UV_COMPILE_BYTECODE=1
+      - UV_LINK_MODE=copy
+    # Healthcheck helps Docker determine if our service is running properly
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 90s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped  # Automatically restart container unless manually stopped
+
+networks:
+  default:
+    name: api-network  # Named network for future service communication
+    driver: bridge
+
+volumes:
+  app-data:  # Define a named volume for persistent data
+    driver: local
+
+# You can add more services here as needed, for example:
+#
+#  db:
+#    image: sqlite:latest
+#    volumes:
+#      - app-data:/var/lib/sqlite
+#    networks:
+#      - api-network
+#
+#  redis:
+#    image: redis:alpine
+#    networks:
+#      - api-network

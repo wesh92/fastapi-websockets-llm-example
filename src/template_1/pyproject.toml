@@ -1,0 +1,18 @@
+[project]
+name = "fastapi-simple-template"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "bcrypt>=4.2.1",
+    "fastapi>=0.115.6",
+    "gunicorn>=23.0.0",
+    "httpx>=0.28.1",
+    "passlib>=1.7.4",
+    "pydantic>=2.10.4",
+    "pyjwt[crypto]>=2.10.1",
+    "python-multipart>=0.0.20",
+    "ruff>=0.8.6",
+    "uvicorn>=0.34.0",
+]

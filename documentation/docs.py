@@ -2,7 +2,6 @@ API_VERSION = "0.1.5"
 FEATURE_OR_CODENAME = "Basic Setup"
 
 
-
 # Top level description of the API
 API_DESCRIPTION = """
 Top-level API Description
@@ -14,7 +13,7 @@ Top-level API Description
 # Add any additional metadata here
 API_DOCS_METADATA = {
     "description": API_DESCRIPTION,
-    "title": "api-template-1", # TODO: Change this to the name of your API
+    "title": "api-template-1",  # TODO: Change this to the name of your API
     "version": f"{API_VERSION} - {FEATURE_OR_CODENAME}",
     "openapi_tags": [
         {

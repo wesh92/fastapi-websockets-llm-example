@@ -25,10 +25,14 @@ ALGORITHM = "HS256"
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token",
-                                     scopes={"me": "Read information about the current user.", 
-                                             "items": "Read items.",
-                                             "weather": "Read weather alerts and related data."})
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl="/auth/token",
+    scopes={
+        "me": "Read information about the current user.",
+        "items": "Read items.",
+        "weather": "Read weather alerts and related data.",
+    },
+)
 
 # TODO: Replace this with a real database
 fake_users_db = {
@@ -40,6 +44,7 @@ fake_users_db = {
         "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
     }
 }
+
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
@@ -59,7 +64,9 @@ def authenticate_user(fake_db, username: str, password: str):
     user = get_user(fake_db, username)
     if not user:
         return False
-    if not verify_password(plain_password=password, hashed_password=user.hashed_password):
+    if not verify_password(
+        plain_password=password, hashed_password=user.hashed_password
+    ):
         return False
     return user
 

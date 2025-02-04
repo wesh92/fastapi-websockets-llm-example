@@ -1,4 +1,3 @@
-
 DEFAULT_RESPONSES = {
     204: {
         "model": None,

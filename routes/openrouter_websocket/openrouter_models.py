@@ -1,8 +1,9 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional, Literal
 from datetime import datetime
+from warnings import deprecated
 
-
+@deprecated("Switch To LangChain System Messages")
 class Message(BaseModel):
     """Individual message in the chat sequence"""
 

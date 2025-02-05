@@ -4,11 +4,8 @@ import time
 from langchain_core.messages import BaseMessage, HumanMessage, AIMessage
 from .chat_models import ChatMessage, ChatResponse
 
-from pathlib import Path
-import tomllib
 import sqlite3
 from typing import List
-from langchain_openai import ChatOpenAI as OpenAIChatModel
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 
@@ -63,52 +60,11 @@ class SQLiteChatMessageHistory(BaseChatMessageHistory):
                     messages.append(AIMessage(content=content))
             return messages
 
-# Get the directory of the current script
-current_dir = Path(__file__).parent
-# Navigate up to the root project directory and find secrets.toml
-secrets_path = current_dir.parent.parent / "secrets.toml"
-assert secrets_path.exists(), f"Secrets file not found at {secrets_path}"
-with open(secrets_path, "rb") as f:
-    secrets = tomllib.load(f)
-
-OPENROUTER_SECRET = secrets["OPENROUTER_SECRET"]
-
-model = OpenAIChatModel(
-    base_url="https://openrouter.ai/api/v1",
-    api_key=OPENROUTER_SECRET,
-    model="google/gemini-flash-1.5",
-    temperature=0.7,
-    max_tokens=1000,
-    streaming=True,
-)
-
-def get_session_history(session_id: str) -> BaseChatMessageHistory:
-    return SQLiteChatMessageHistory(session_id)
-
-with_message_history = RunnableWithMessageHistory(model, get_session_history)
-
-# Example usage
-if __name__ == "__main__":
-    config = {"configurable": {"session_id": "abc3"}}
-
-    # Test message persistence
-    response = with_message_history.invoke(
-        [HumanMessage(content="Hi! I'm Bob")],
-        config=config,
-    )
-
-    # Test message retrieval
-    for r in with_message_history.stream(
-        [HumanMessage(content="What's my name?")],
-        config=config,
-    ):
-        print(r.content, end="|")
-
 class ChatService:
     def __init__(self):
         self._chat_histories = {}
 
-    async def process_message(self, message: ChatMessage) -> AsyncGenerator[ChatResponse, None]:
+    async def process_message(self, message: ChatMessage, with_message_history: RunnableWithMessageHistory) -> AsyncGenerator[ChatResponse, None]:
         start_time = time.time()
         
         # Get or create chat history for this session

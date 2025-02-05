@@ -14,7 +14,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -26,11 +25,19 @@ share/python-wheels/
 *.egg
 MANIFEST
 
+# Any directory that isn't /src/lib but named lib
+lib/
+!site/src/components/lib/
+
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
+
+
+
 *.spec
+
 
 # Installer logs
 pip-log.txt
@@ -143,8 +150,10 @@ venv.bak/
 # Rope project settings
 .ropeproject
 
-# mkdocs documentation
-/site
+# Node Site Stuff
+site/node_modules/
+site/pnpm-lock.yaml
+
 
 # mypy
 .mypy_cache/
@@ -174,3 +183,6 @@ secrets*
 
 # Cursor
 .cursorignore
+
+# Any .db suffix files
+*.db

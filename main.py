@@ -15,9 +15,6 @@ from routes.weather.weather_controller import (
     ENDPOINT_ACTIVE as WEATHER_ENDPOINT_ACTIVE,
     router as weather_router,
 )
-from routes.openrouter_websocket.openrouter_websocket_controller import (
-    router as openrouter_websocket_router,
-)
 from routes.chat_websocket.chat_controller import router as chat_websocket_router
 
 def configure_router(router: APIRouter, responses: dict) -> APIRouter:
@@ -54,7 +51,6 @@ def setup_routers(app: FastAPI) -> None:
         # (users_router, "/users", ["users"]),
         (weather_router, "/weather", ["weather"]) if WEATHER_ENDPOINT_ACTIVE else ...,
         (healthcheck_router, "/health", ["health"]),
-        (openrouter_websocket_router, "/websockets", ["websockets"]),
         (chat_websocket_router, "/websockets", ["websockets"]),]
 
     for router, prefix, tags in router_configs:

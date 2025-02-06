@@ -1,14 +1,17 @@
-# FastAPI WebSocket OpenRouter Template
+# FastAPI AI Chat Template
 
-A robust FastAPI-based WebSocket server template that integrates with OpenRouter's API for real-time AI model interactions. This project provides a production-ready foundation for building WebSocket-based applications that require AI model integration.
+A robust FastAPI-based WebSocket and HTTP server template that integrates with OpenRouter's API for real-time AI model interactions. This project provides a production-ready foundation for building chat applications powered by various AI models through OpenRouter's unified API interface.
 
 ## Features
 
-This template includes:
+This template includes a comprehensive set of features designed for building production-ready AI chat applications:
 
 - Real-time WebSocket communication with AI models through OpenRouter
+- Support for multiple chat models including Gemini, Qwen, and other leading options
+- Message history persistence using SQLite
+- Rate limiting and backpressure handling for reliable performance
 - Robust error handling and logging
-- Docker containerization
+- Docker containerization with optimized uv package management
 - Health check endpoints
 - Structured API documentation
 - Authentication support
@@ -17,20 +20,22 @@ This template includes:
 
 ## Prerequisites
 
+Before getting started, ensure you have:
+
 - Python 3.13 or higher
 - Docker and Docker Compose (for containerized deployment)
 - OpenRouter API key (stored in secrets.toml)
 
 ## Dependencies
 
-Core dependencies include:
+The project relies on several key dependencies for its functionality:
 
-- FastAPI (>= 0.115.6) - Web framework for building APIs
+- FastAPI (>= 0.115.6) - Modern web framework for building APIs
+- LangChain (>= 0.3.17) - Framework for working with language models
 - aiohttp (>= 3.11.11) - Async HTTP client/server framework
-- uvicorn (>= 0.34.0) - ASGI server implementation
+- uvicorn (>= 0.34.0) - Lightning-fast ASGI server
 - pydantic (>= 2.10.4) - Data validation using Python type annotations
-- gunicorn (>= 23.0.0) - WSGI HTTP server
-- python-multipart (>= 0.0.20) - Streaming multipart parser
+- gunicorn (>= 23.0.0) - Production-grade WSGI HTTP server
 - JWT authentication libraries:
   - PyJWT[crypto] (>= 2.10.1)
   - passlib (>= 1.7.4)
@@ -38,20 +43,23 @@ Core dependencies include:
 
 ## Project Structure
 
+The project follows a clear and modular structure:
+
 ```
 ├── routes/
-│   ├── openrouter_websocket/
-│   │   ├── openrouter_models.py      # Pydantic models for OpenRouter
-│   │   ├── openrouter_service.py     # OpenRouter API communication service
-│   │   └── openrouter_websocket_controller.py  # WebSocket endpoint controller
+│   ├── chat/
+│   │   ├── chat_models.py           # Pydantic models for chat functionality
+│   │   ├── chat_service.py          # Core chat service implementation
+│   │   └── chat_controller.py       # WebSocket and HTTP endpoints
 ├── internal/
-│   ├── auth/                         # Authentication components
-│   ├── health/                       # Health check endpoints
-│   └── dependencies/                 # Shared dependencies
-├── documentation/                    # API documentation
-├── docker-compose.yml               # Docker Compose configuration
-├── main.py                         # Application entry point
-└── pyproject.toml                  # Project metadata and dependencies
+│   ├── auth/                        # Authentication components
+│   ├── health/                      # Health check endpoints
+│   └── dependencies/                # Shared dependencies
+├── documentation/                   # API documentation
+├── Dockerfile                      # Main docker entrypoint for the python app
+├── docker-compose.yml              # Docker Compose configuration
+├── main.py                        # Application entry point
+└── pyproject.toml                 # Project metadata and dependencies
 ```
 
 ## Configuration
@@ -66,23 +74,24 @@ OPENROUTER_SECRET = "your-openrouter-api-key"
 
 ### Docker Configuration
 
-The included `docker-compose.yml` provides:
-- Port mapping (8000:8000)
-- Volume mounting for development
-- Health check configuration
-- Automatic container restart
-- Named network for service communication
+The provided Docker setup includes several optimizations:
+
+- Uses Python 3.13 slim-bookworm base image
+- Implements uv for faster package management
+- Configures health checks and automatic restarts
+- Sets up volume mounting for development
+- Creates a named network for service communication
 
 ## Usage
 
 ### Starting the Server
 
-Using Docker:
+Using Docker (recommended for production):
 ```bash
 docker-compose up -d
 ```
 
-Using Python directly:
+Using Python directly (development):
 ```bash
 uvicorn main:app --host 0.0.0.0 --port 8000
 ```
@@ -91,54 +100,63 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 
 Connect to the WebSocket endpoint at:
 ```
-ws://localhost:8000/websockets/openrouter
+ws://localhost:8000/websockets/chat/{session_id}
 ```
 
-You can test with a platform like `WebSocketKing`.
+The session_id parameter allows for maintaining separate chat sessions with persistent history.
 
 ### Message Format
 
-Messages to the WebSocket should follow this format:
+Messages to the WebSocket should follow this format (model is optional, defaults to gemini-flash-1.5):
 ```json
 {
-    "messages": [
-        {
-            "role": "user",
-            "content": "Write a simple python script to add 3 numbers."
-        }
-    ],
-    "model": "google/gemini-flash-1.5",
-    "temperature": 1,
-    "top_p": 1
+    "message": "Write a simple python script to add 3 numbers.",
+    "model": "google/gemini-flash-1.5"
 }
+```
+
+Available models can be queried through the HTTP endpoint:
+```
+GET http://localhost:8000/chat/metadata/available_models
 ```
 
 ## API Documentation
 
-Access the API documentation at:
+Access the interactive API documentation at:
 ```
 http://localhost:8000/docs
 ```
-NOTE: There is currently no documentation there for the WS although the category is there. TBD.
+
+## Chat Service Architecture
+
+The chat service implements several important features:
+
+- Message queuing with backpressure control
+- Rate limiting using a token bucket algorithm
+- Persistent message history using SQLite
+- Support for multiple simultaneous chat sessions
+- Real-time streaming of AI responses
 
 ## Error Handling
 
-The system includes comprehensive error handling:
+The system provides comprehensive error handling across multiple layers:
+
 - WebSocket connection management
+- Message rate limiting and queuing
 - API communication errors
-- Message parsing errors
-- Service initialization failures
+- Database operations
+- Service initialization
 
 All errors are logged with appropriate detail levels and returned to the client with clear error messages.
 
 ## Health Monitoring
 
-Health checks are available at:
+A health check endpoint is available at:
 ```
 http://localhost:8000/health
 ```
 
-The Docker container includes automated health checking every 90 seconds.
+The Docker container includes automated health checking every 90 seconds to ensure system stability.
 
 ## Development
 
@@ -151,12 +169,12 @@ The Docker container includes automated health checking every 90 seconds.
 
 ### Code Style
 
-The project uses ruff for code formatting and linting. Configuration is provided in `pyproject.toml`.
-This is setup using `uv` and I recommend using that.
+The project uses ruff for code formatting and linting, with configuration provided in `pyproject.toml`. The uv package manager is recommended for dependency management and virtual environment handling.
 
 ## Security Considerations
 
-- API keys are stored in `secrets.toml` (not version controlled). You should probably use GH Secrets or some other provider.
-- WebSocket connections include state tracking
+- API keys are stored in `secrets.toml` (not version controlled)
+- WebSocket connections include state tracking and rate limiting
 - Authentication middleware available for protected routes
+- SQLite database for persistent storage with proper connection management
 - Headers are sanitized in logs
